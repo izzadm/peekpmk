@@ -45,6 +45,73 @@ export const useAuth = () => {
     checkSession()
   }, [])
 
+  const verifyPpmkId = async (ppmkId: string, icNumber: string) => {
+    try {
+      console.log('Verifying PPMK ID:', ppmkId, 'with IC:', icNumber)
+      
+      const { data, error } = await supabase.rpc('verify_user_credentials', {
+        p_ppmk_id: ppmkId.trim(),
+        p_ic_number: icNumber.trim()
+      })
+
+      console.log('Verification result:', { data, error })
+
+      if (error) {
+        console.error('Verification error:', error)
+        throw new Error(error.message || 'Verification failed')
+      }
+
+      if (!data || data.length === 0) {
+        throw new Error('Invalid PPMK ID or IC number')
+      }
+
+      return data[0]
+    } catch (error: any) {
+      console.error('Verification error:', error)
+      throw error
+    }
+  }
+
+  const signUp = async (ppmkId: string, icNumber: string, password: string) => {
+    try {
+      console.log('Creating account for PPMK ID:', ppmkId)
+      
+      // First verify the credentials
+      await verifyPpmkId(ppmkId, icNumber)
+      
+      // Then create the account with password
+      const { data, error } = await supabase.rpc('create_user_account', {
+        p_ppmk_id: ppmkId.trim(),
+        p_password: password
+      })
+
+      console.log('Account creation result:', { data, error })
+
+      if (error) {
+        console.error('Account creation error:', error)
+        throw new Error(error.message || 'Account creation failed')
+      }
+
+      if (!data || data.length === 0) {
+        throw new Error('Failed to create account')
+      }
+
+      const userData = data[0]
+
+      // Store user in localStorage
+      localStorage.setItem('ppmk_user', JSON.stringify(userData))
+      
+      // Update state
+      setUser(userData)
+      triggerRerender()
+
+      return { user: userData }
+    } catch (error: any) {
+      console.error('Signup error:', error)
+      throw error
+    }
+  }
+
   const signIn = async (ppmkId: string, password: string) => {
     try {
       console.log('Attempting to sign in with PPMK ID:', ppmkId)
@@ -111,6 +178,8 @@ export const useAuth = () => {
     user,
     loading,
     signIn,
+    signUp,
     signOut,
+    verifyPpmkId,
   }
 }

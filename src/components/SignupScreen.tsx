@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
-import { ArrowLeft, Eye, EyeOff, User, CreditCard, Lock } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff, User, CreditCard, Lock, CheckCircle } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { supabase } from '../lib/supabase'
 
 interface SignupScreenProps {
   onBack: () => void
 }
 
 const SignupScreen: React.FC<SignupScreenProps> = ({ onBack }) => {
-  const [step, setStep] = useState<'verify' | 'create'>('verify')
+  const [step, setStep] = useState<'verify' | 'create' | 'success'>('verify')
   const [ppmkId, setPpmkId] = useState('')
   const [icNumber, setIcNumber] = useState('')
   const [password, setPassword] = useState('')
@@ -16,8 +17,9 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [verifiedData, setVerifiedData] = useState<any>(null)
 
-  const { signUp } = useAuth()
+  const { verifyPpmkId } = useAuth()
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,7 +32,8 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack }) => {
     setError('')
 
     try {
-      // This will be handled in the create step
+      const userData = await verifyPpmkId(ppmkId, icNumber)
+      setVerifiedData(userData)
       setStep('create')
     } catch (err: any) {
       setError(err.message || 'Verification failed')
@@ -60,8 +63,25 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack }) => {
     setError('')
 
     try {
-      await signUp(ppmkId, icNumber, password)
-      // User will be automatically logged in after successful signup
+      // Create account without auto-login
+      const { data, error } = await supabase.rpc('create_user_account', {
+        p_ppmk_id: ppmkId.trim(),
+        p_password: password
+      })
+
+      if (error) {
+        throw new Error(error.message || 'Account creation failed')
+      }
+
+      if (!data || data.length === 0) {
+        throw new Error('Failed to create account')
+      }
+
+      // Show success message and redirect to login
+      setStep('success')
+      setTimeout(() => {
+        onBack() // This will redirect to login page
+      }, 2000)
     } catch (err: any) {
       setError(err.message || 'Account creation failed')
       // If verification fails, go back to verify step
@@ -71,6 +91,23 @@ const SignupScreen: React.FC<SignupScreenProps> = ({ onBack }) => {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (step === 'success') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 text-center">
+          <div className="mb-6">
+            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Account Created!</h1>
+            <p className="text-gray-600 text-sm">
+              Your account has been successfully created. Redirecting to login page...
+            </p>
+          </div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        </div>
+      </div>
+    )
   }
 
   if (step === 'verify') {
