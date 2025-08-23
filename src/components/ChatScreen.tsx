@@ -144,13 +144,13 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ user, onBack, onSelectRoom }) =
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50">
       {/* Background Pattern */}
-      <div className="fixed inset-0 opacity-30">
+      <div className="fixed inset-0 opacity-30 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-cyan-400/20 to-teal-400/20"></div>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-300/30 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-300/30 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative z-10 pb-20">
+      <div className="relative z-10">
         {/* Header */}
         <header className="bg-white/80 backdrop-blur-lg border-b border-white/20 sticky top-0 z-50">
           <div className="px-6 py-4">
@@ -162,7 +162,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ user, onBack, onSelectRoom }) =
           </div>
         </header>
 
-        <div className="p-6">
+        <div className="p-6 pb-24">
           {/* Search */}
           <div className="relative mb-6">
             <Search size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />

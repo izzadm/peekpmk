@@ -46,20 +46,6 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onShowLogin, onShowSignup
               <span>SIGN UP</span>
             </button>
           </div>
-
-          {/* Demo Login */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-center text-sm text-gray-500 mb-3">For testing purposes</p>
-            <button
-              onClick={() => {
-                // Auto-fill demo credentials and show login
-                onShowLogin()
-              }}
-              className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors text-sm"
-            >
-              Try Demo Account
-            </button>
-          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { AuthUser } from '../hooks/useAuth'
+import { AuthUser, useAuth } from '../hooks/useAuth'
 import { 
   User, 
   Bell, 
@@ -19,14 +19,14 @@ import StudyMaterialsScreen from './StudyMaterialsScreen'
 
 interface MoreScreenProps {
   user: AuthUser
-  onLogout: () => void
   onUserUpdate?: (updatedUser: AuthUser) => void
 }
 
-const MoreScreen: React.FC<MoreScreenProps> = ({ user, onLogout, onUserUpdate }) => {
+const MoreScreen: React.FC<MoreScreenProps> = ({ user, onUserUpdate }) => {
   const [activeScreen, setActiveScreen] = useState<string | null>(null)
   const [showOrganizations, setShowOrganizations] = useState(false)
   const [currentUser, setCurrentUser] = useState<AuthUser>(user)
+  const { signOut } = useAuth()
 
   const handleBack = () => {
     setActiveScreen(null)
@@ -40,6 +40,15 @@ const MoreScreen: React.FC<MoreScreenProps> = ({ user, onLogout, onUserUpdate })
     setCurrentUser(updatedUser)
     if (onUserUpdate) {
       onUserUpdate(updatedUser)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      console.log('Logout button clicked')
+      await signOut()
+    } catch (error) {
+      console.error('Logout error:', error)
     }
   }
 
@@ -155,7 +164,7 @@ const MoreScreen: React.FC<MoreScreenProps> = ({ user, onLogout, onUserUpdate })
         {/* Logout Button */}
         <div className="mt-6">
           <button
-            onClick={onLogout}
+            onClick={handleLogout}
             className="w-full bg-white rounded-lg shadow-sm p-4 flex items-center justify-between hover:bg-red-50 transition-colors group"
           >
             <div className="flex items-center space-x-4">

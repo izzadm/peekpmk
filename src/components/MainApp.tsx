@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { AuthUser, useAuth } from '../hooks/useAuth'
+import { AuthUser } from '../hooks/useAuth'
 import { Home, MessageCircle, Calendar, MapPin, MoreHorizontal } from 'lucide-react'
 import AnnouncementsScreen from './AnnouncementsScreen'
 import ChatScreen from './ChatScreen'
@@ -18,15 +18,6 @@ const MainApp: React.FC<MainAppProps> = ({ user, onUserUpdate }) => {
   const [activeTab, setActiveTab] = useState('Home')
   const [showProfile, setShowProfile] = useState(false)
   const [selectedChatRoom, setSelectedChatRoom] = useState<string | null>(null)
-  const { signOut } = useAuth()
-
-  const handleLogout = async () => {
-    try {
-      await signOut()
-    } catch (error) {
-      console.error('Logout error:', error)
-    }
-  }
 
   const handleNavigateToProfile = () => {
     setShowProfile(true)
@@ -46,6 +37,11 @@ const MainApp: React.FC<MainAppProps> = ({ user, onUserUpdate }) => {
 
   const handleBackFromChat = () => {
     setActiveTab('Home')
+  }
+
+  const handleTabClick = (tabId: string) => {
+    setSelectedChatRoom(null)
+    setActiveTab(tabId)
   }
 
   const tabs = [
@@ -79,16 +75,13 @@ const MainApp: React.FC<MainAppProps> = ({ user, onUserUpdate }) => {
           />
         </div>
         
-        {/* Bottom Navigation - Always visible */}
-        <nav className="bg-white border-t border-gray-200 px-4 py-2">
+        {/* Bottom Navigation - Always visible with proper z-index */}
+        <nav className="bg-white border-t border-gray-200 px-4 py-2 relative z-50">
           <div className="flex justify-around">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => {
-                  setSelectedChatRoom(null)
-                  setActiveTab(tab.id)
-                }}
+                onClick={() => handleTabClick(tab.id)}
                 className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
                   activeTab === tab.id
                     ? 'text-blue-600 bg-blue-50'
@@ -112,7 +105,6 @@ const MainApp: React.FC<MainAppProps> = ({ user, onUserUpdate }) => {
         {activeTab === 'More' ? (
           <MoreScreen 
             user={user} 
-            onLogout={handleLogout}
             onUserUpdate={onUserUpdate}
           />
         ) : activeTab === 'Home' ? (
@@ -140,13 +132,13 @@ const MainApp: React.FC<MainAppProps> = ({ user, onUserUpdate }) => {
         )}
       </div>
 
-      {/* Bottom Navigation */}
-      <nav className="bg-white border-t border-gray-200 px-4 py-2">
+      {/* Bottom Navigation with proper z-index */}
+      <nav className="bg-white border-t border-gray-200 px-4 py-2 relative z-50">
         <div className="flex justify-around">
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabClick(tab.id)}
               className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
                 activeTab === tab.id
                   ? 'text-blue-600 bg-blue-50'

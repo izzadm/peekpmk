@@ -82,9 +82,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, isDemoMode = false })
           {/* Debug Info */}
           <div className="mb-6 p-3 bg-blue-100 border border-blue-300 text-blue-700 rounded-lg text-sm">
             <p className="font-medium">Test Credentials:</p>
-            <p>PPMK ID: PPMK001</p>
-            <p>Password: password123</p>
-            <p className="mt-2 text-xs">Enter your PPMK ID (not email)</p>
+            <p>PPMK ID: PPMK002</p>
+            <p>Password: 123abc</p>
           </div>
 
           {/* Form */}
@@ -99,7 +98,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, isDemoMode = false })
                 value={ppmkId}
                 onChange={(e) => setPpmkId(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
-                placeholder="Enter your PPMK ID (e.g., PPMK001)"
+                placeholder="Enter your PPMK ID (e.g., PPMK002)"
                 required
               />
             </div>

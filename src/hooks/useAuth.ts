@@ -93,79 +93,14 @@ export const useAuth = () => {
     }
   }
 
-  const signUp = async (ppmkId: string, icNumber: string, password: string) => {
-    try {
-      console.log('Attempting to sign up with PPMK ID:', ppmkId)
-      
-      // First verify user credentials (PPMK ID + IC number)
-      const { data: verifyData, error: verifyError } = await supabase.rpc('verify_user_credentials', {
-        p_ppmk_id: ppmkId.trim(),
-        p_ic_number: icNumber.trim()
-      })
-
-      if (verifyError) {
-        console.error('Verification error:', verifyError)
-        throw new Error(verifyError.message || 'Verification failed. Please check your PPMK ID and IC number.')
-      }
-
-      if (!verifyData || verifyData.length === 0) {
-        throw new Error('Invalid PPMK ID or IC number. Please verify your credentials.')
-      }
-
-      const userRecord = verifyData[0]
-
-      // Check if user already has a password
-      if (userRecord.password_hash) {
-        throw new Error('Account already exists. Please sign in instead.')
-      }
-
-      // Create user account with password
-      const { data: createData, error: createError } = await supabase.rpc('create_user_account', {
-        p_ppmk_id: ppmkId.trim(),
-        p_password: password
-      })
-
-      if (createError) {
-        console.error('Account creation error:', createError)
-        throw new Error(createError.message || 'Account creation failed. Please try again.')
-      }
-
-      if (!createData || createData.length === 0) {
-        throw new Error('Account creation failed. Please try again.')
-      }
-
-      const newUser = createData[0]
-
-      // Store user in localStorage first
-      localStorage.setItem('ppmk_user', JSON.stringify(newUser))
-      
-      // Use React's flushSync to ensure synchronous state update
-      import('react-dom').then(({ flushSync }) => {
-        flushSync(() => {
-          setUser(newUser)
-        })
-        // Force additional re-render
-        triggerRerender()
-      }).catch(() => {
-        // Fallback if flushSync is not available
-        setUser(newUser)
-        setTimeout(() => {
-          triggerRerender()
-        }, 0)
-      })
-
-      return { user: newUser }
-    } catch (error: any) {
-      console.error('Signup error:', error)
-      throw error
-    }
-  }
-
   const signOut = async () => {
     try {
+      console.log('Signing out user')
       setUser(null)
       localStorage.removeItem('ppmk_user')
       triggerRerender()
+      // Force a page reload to ensure clean state
+      window.location.reload()
     } catch (error) {
       console.error('Logout error:', error)
       throw error
@@ -175,7 +110,6 @@ export const useAuth = () => {
   return {
     user,
     loading,
-    signUp,
     signIn,
     signOut,
   }
