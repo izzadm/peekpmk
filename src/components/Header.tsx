@@ -16,10 +16,10 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onShowProfile }) => {
           {/* Logo and Title */}
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-              <span className="text-white text-lg font-bold">A</span>
+              <span className="text-white text-lg font-bold">P</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-800">AINA</h1>
+              <h1 className="text-xl font-bold text-gray-800">PeekPMK</h1>
               <p className="text-xs text-gray-500">AI Network Assistant</p>
             </div>
           </div>
