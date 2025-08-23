@@ -24,7 +24,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onShowLogin, onShowSignup
             <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <span className="text-white font-bold text-3xl">P</span>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">PeekPMK apps</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">PeekPMK</h1>
             <p className="text-gray-600">Welcome to PeekPMK Community Platform</p>
           </div>
 
