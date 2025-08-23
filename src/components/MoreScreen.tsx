@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import { AuthUser, useAuth } from '../hooks/useAuth'
 import { 
   User, 
-  Bell, 
-  MessageSquare, 
   Users, 
   BookOpen, 
   HelpCircle, 
@@ -12,10 +10,10 @@ import {
   Settings
 } from 'lucide-react'
 import ProfileScreen from './ProfileScreen'
-import AnnouncementsScreen from './AnnouncementsScreen'
 import OrganizationsModal from './OrganizationsModal'
 import HelpdeskScreen from './HelpdeskScreen'
 import StudyMaterialsScreen from './StudyMaterialsScreen'
+import AdminPanel from './AdminPanel'
 
 interface MoreScreenProps {
   user: AuthUser
@@ -62,22 +60,16 @@ const MoreScreen: React.FC<MoreScreenProps> = ({ user, onUserUpdate }) => {
     )
   }
 
-  if (activeScreen === 'announcements') {
-    return (
-      <AnnouncementsScreen 
-        user={currentUser} 
-        onBack={handleBack}
-        onNavigateToProfile={handleNavigateToProfile}
-      />
-    )
-  }
-
   if (activeScreen === 'helpdesk') {
     return <HelpdeskScreen user={currentUser} onBack={handleBack} />
   }
 
   if (activeScreen === 'study-materials') {
     return <StudyMaterialsScreen user={currentUser} onBack={handleBack} />
+  }
+
+  if (activeScreen === 'admin') {
+    return <AdminPanel user={currentUser} onBack={handleBack} />
   }
 
   const menuItems = [
@@ -87,13 +79,6 @@ const MoreScreen: React.FC<MoreScreenProps> = ({ user, onUserUpdate }) => {
       title: 'Profile',
       subtitle: 'Manage your account',
       action: () => setActiveScreen('profile')
-    },
-    {
-      id: 'announcements',
-      icon: Bell,
-      title: 'Announcements',
-      subtitle: 'PPMK notifications',
-      action: () => setActiveScreen('announcements')
     },
     {
       id: 'organizations',
@@ -108,6 +93,13 @@ const MoreScreen: React.FC<MoreScreenProps> = ({ user, onUserUpdate }) => {
       title: 'Study Materials',
       subtitle: 'Academic resources & materials',
       action: () => setActiveScreen('study-materials')
+    },
+    {
+      id: 'admin',
+      icon: Settings,
+      title: 'Admin Panel',
+      subtitle: 'Manage app content',
+      action: () => setActiveScreen('admin')
     },
     {
       id: 'helpdesk',
